@@ -71,7 +71,7 @@ runs:
 
     - name: Godot iOS export
       shell: bash
-      run: ./Godot.app/Contents/MacOS/Godot --headless --debug --path ${{ inputs.working-directory }} --export-release iOS
+      run: ./Godot.app/Contents/MacOS/Godot --headless --path ${{ inputs.working-directory }} --export-release iOS
 
     - name: Publish the App on TestFlight
       shell: bash
