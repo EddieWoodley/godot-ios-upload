@@ -71,40 +71,7 @@ runs:
 
     - name: Godot iOS export
       shell: bash
-      run: ./Godot.app/Contents/MacOS/Godot --headless --path ${{ inputs.working-directory }} --export-release iOS
-
-    - name: Extract Provisioning profile UUID and create PP_UUID env variable
-      shell: bash
-      run: echo "PP_UUID=$(grep -a -A 1 'UUID' ${{ inputs.provision-profile-path }} | grep string | sed -e "s|<string>||" -e "s|</string>||" | tr -d '\t')" >> $GITHUB_ENV
-
-    - name: Resolve package dependencies
-      shell: bash
-      run: xcodebuild -resolvePackageDependencies
-
-    - name: Build the xarchive
-      shell: bash
-      run: |
-        set -eo pipefail
-        xcodebuild  clean archive \
-          -scheme ${{ inputs.project-name }} \
-          -configuration "Release" \
-          -sdk iphoneos \
-          -archivePath "$PWD/build/${{ inputs.project-name }}.xcarchive" \
-          -destination "generic/platform=iOS,name=Any iOS Device" \
-          OTHER_CODE_SIGN_FLAGS="--keychain $RUNNER_TEMP/app-signing.keychain-db" \
-          CODE_SIGN_STYLE=Manual \
-          PROVISIONING_PROFILE=$PP_UUID \
-          CODE_SIGN_IDENTITY="Apple Distribution"
-
-    - name: Export .ipa
-      shell: bash
-      run: |
-        set -eo pipefail
-        xcodebuild -archivePath "$PWD/build/${{ inputs.project-name }}.xcarchive" \
-          -exportOptionsPlist exportOptions.plist \
-          -exportPath $PWD/build \
-          -allowProvisioningUpdates \
-          -exportArchive
+      run: ./Godot.app/Contents/MacOS/Godot --headless --verbose --path ${{ inputs.working-directory }} --export-release iOS
 
     - name: Publish the App on TestFlight
       shell: bash
